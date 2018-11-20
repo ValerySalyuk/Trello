@@ -77,10 +77,12 @@ public class TaskService {
 
     }
 
-    public void updateStatus(Long taskId, String newStatus) {
+    public boolean updateStatus(Long taskId, String newStatus) {
         if (taskExists(taskId) && TaskStatus.contains(newStatus)) {
             taskMap.get(taskId).setTaskStatus(TaskStatus.valueOf(newStatus.toUpperCase()));
+            return true;
         }
+        return false;
     }
 
 }

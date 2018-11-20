@@ -42,15 +42,15 @@ public class UserController {
     }
 
     @DeleteMapping("/delete/{id}")
-    public void delete(@PathVariable Long id) {
-        userService.deleteUser(id);
+    public boolean delete(@PathVariable Long id) {
         LOGGER.info("Request for user No.: " + id + " deletion");
+        return userService.deleteUser(id);
     }
 
     @PutMapping("/update/{id}")
-    public void update(@PathVariable Long id, @RequestBody User user) {
-        userService.updateUser(id, user);
+    public boolean update(@PathVariable Long id, @RequestBody User user) {
         LOGGER.info("Request for user No.: " + id + " update");
+        return userService.updateUser(id, user);
     }
 
 }

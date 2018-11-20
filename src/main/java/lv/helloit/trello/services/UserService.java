@@ -36,17 +36,21 @@ public class UserService {
         }
     }
 
-    public void updateUser(Long id, User u) {
+    public boolean updateUser(Long id, User u) {
         if (userExists(id)) {
             u.setId(id);
             userMap.replace(id, u);
+            return true;
         }
+        return false;
     }
 
-    public void deleteUser(Long id) {
+    public boolean deleteUser(Long id) {
         if (userExists(id)) {
             userMap.remove(id);
+            return true;
         }
+        return false;
     }
 
 }

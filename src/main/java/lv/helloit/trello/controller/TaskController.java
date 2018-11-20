@@ -64,9 +64,9 @@ public class TaskController {
     }
 
     @PutMapping("/setstatus/{id}")
-    public void setStatus(@PathVariable Long id, @RequestParam("status") String status) {
-        taskService.updateStatus(id, status);
+    public boolean setStatus(@PathVariable Long id, @RequestParam("status") String status) {
         LOGGER.info("Added status to task No. " + id);
+        return taskService.updateStatus(id, status);
     }
 
     @GetMapping("/getuser/{id}")
