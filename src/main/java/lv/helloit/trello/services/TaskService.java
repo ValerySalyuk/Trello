@@ -2,13 +2,16 @@ package lv.helloit.trello.services;
 
 import lv.helloit.trello.dto.task.Task;
 import lv.helloit.trello.dto.task.TaskStatus;
+import lv.helloit.trello.dto.task.TaskView;
 import lv.helloit.trello.dto.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Component
 public class TaskService {
@@ -30,8 +33,19 @@ public class TaskService {
         return taskMap.containsKey(id);
     }
 
-    public Collection<Task> getTasks() {
-        return taskMap.values();
+    public List<TaskView> getTasks() {
+        return taskMap.values().stream().map(task -> {
+            User user = userService.getUser(task.getAssignedUserId());
+
+            return new TaskView(
+                    task.getId(),
+                    task.getTitle(),
+                    task.getDescription(),
+                    task.getAssignedUserId(),
+                    task.getTaskStatus(),
+                    user == null ? null : user.getName() + " " + user.getLastName()
+            );
+        }).collect(Collectors.toList());
     }
 
     public Task getTask(Long id) {

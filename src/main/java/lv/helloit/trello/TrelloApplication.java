@@ -15,11 +15,11 @@ public class TrelloApplication {
 		ConfigurableApplicationContext context = SpringApplication.run(TrelloApplication.class, args);
 
 		TaskService ts = context.getBean(TaskService.class);
-		ts.addTask(new Task(null, "Task 1", "Test task 1 description", null));
-		ts.addTask(new Task(null, "Task 2", "Test task 2 description", null));
-		ts.addTask(new Task(null, "Task 3", "Test task 3 description", null));
-		ts.addTask(new Task(null, "Task 4", "Test task 4 description", null));
-		ts.addTask(new Task(null, "Task 5", "Test task 5 description", null));
+		ts.addTask(new Task(null, "Task 1", "Test task 1 description", null, null));
+		ts.addTask(new Task(null, "Task 2", "Test task 2 description", null, null));
+		ts.addTask(new Task(null, "Task 3", "Test task 3 description", null, null));
+		ts.addTask(new Task(null, "Task 4", "Test task 4 description", null, null));
+		ts.addTask(new Task(null, "Task 5", "Test task 5 description", null, null));
 
 		UserService us = context.getBean(UserService.class);
 		us.addUser(new User(null, 23, "Marija", "Ostrova"));

@@ -1,5 +1,6 @@
 package lv.helloit.trello.controller;
 
+import lv.helloit.trello.dto.task.TaskView;
 import lv.helloit.trello.services.TaskService;
 import lv.helloit.trello.services.UserService;
 import lv.helloit.trello.dto.task.Task;
@@ -28,7 +29,7 @@ public class TaskController {
     }
 
     @GetMapping
-    public Collection<Task> allTasks() {
+    public Collection<TaskView> allTasks() {
         LOGGER.info(taskService.getTasks().size() + " tasks returned");
         return taskService.getTasks();
     }

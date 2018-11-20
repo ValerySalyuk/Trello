@@ -11,7 +11,7 @@ public class Task {
     public Task() {
     }
 
-    public Task(Long id, String title, String description, /*Long assignedUserId,*/ TaskStatus taskStatus) {
+    public Task(Long id, String title, String description, Long assignedUserId, TaskStatus taskStatus) {
         this.id = id;
         this.title = title;
         this.description = description;

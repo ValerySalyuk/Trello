@@ -10,21 +10,17 @@ function loadTasks() {
 }
 
 function addTask(task) {
-    if (task.assignedUserId != null) {
-        fetch("/tasks/getuser/" + task.id, {
-            method: "get"
-        })
-            .then(resp => resp.json())
-            .then(user => {
-                console.log("Inside fetch. User name: " + user.name);
-                //fetchedUser = user;
-                console.log("Inside fetch. User: " /*+ fetchedUser*/);
-            });
-        console.log(task.assignedUserId);
-        console.log("After fetch. User: " /*+ fetchedUser*/);
-    }
-
-    console.log("After if. User: " /*+ fetchedUser*/);
+    // if (task.assignedUserId != null) {
+    //     //     fetch("/tasks/getuser/" + task.id, {
+    //     //         method: "get"
+    //     //     })
+    //     //         .then(resp => resp.json())
+    //     //         .then(user => {
+    //     //             console.log("Inside fetch. User name: " + user.name);
+    //     //             //fetchedUser = user;
+    //     //             console.log("Inside fetch. User: " /*+ fetchedUser*/);
+    //     //         });
+    //     // }
 
     const tr = document.createElement("tr");
     tr.innerHTML = `
@@ -32,7 +28,7 @@ function addTask(task) {
         <td>${task.title}</td>
         <td>${task.description}</td>
         <td>${task.taskStatus}</td>
-        <td>${task.assignedUserId}</td>
+        <td>${task.userName}</td>
         <td>
             <button onclick="deleteTask(${task.id})">Delete</button>|
             <a href="/fetasks/editTask.html?taskId=${task.id}">Edit</a>|
