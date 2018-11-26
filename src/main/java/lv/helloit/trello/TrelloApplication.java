@@ -1,32 +1,24 @@
 package lv.helloit.trello;
 
-import lv.helloit.trello.dto.task.Task;
-import lv.helloit.trello.dto.user.User;
-import lv.helloit.trello.services.TaskService;
-import lv.helloit.trello.services.UserService;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.ConfigurableApplicationContext;
+//STEP 1. Import required packages
+import java.sql.*;
 
 @SpringBootApplication
 public class TrelloApplication {
 
+	// JDBC driver name and database URL
+	private static final String JDBC_DRIVER = "org.postgresql.Driver";
+	private static final String DB_URL = "jdbc:postgresql://ec2-54-246-85-234.eu-west-1.compute.amazonaws.com:5432/d38fg66uk8rvv9?ssl=true&sslfactory=org.postgresql.ssl.NonValidatingFactory";
+
+	//  Database credentials
+	private static final String USER = "ztacdohjspyclv";
+	private static final String PASS = "3d0cc2c4883e31c3a81df63bae6235dd3812609b831da382a3737b20df5e5aad";
+
 	public static void main(String[] args) {
-		ConfigurableApplicationContext context = SpringApplication.run(TrelloApplication.class, args);
 
-		TaskService ts = context.getBean(TaskService.class);
-		ts.addTask(new Task(null, "Task 1", "Test task 1 description", null, null));
-		ts.addTask(new Task(null, "Task 2", "Test task 2 description", null, null));
-		ts.addTask(new Task(null, "Task 3", "Test task 3 description", null, null));
-		ts.addTask(new Task(null, "Task 4", "Test task 4 description", null, null));
-		ts.addTask(new Task(null, "Task 5", "Test task 5 description", null, null));
-
-		UserService us = context.getBean(UserService.class);
-		us.addUser(new User(null, 23, "Marija", "Ostrova"));
-		us.addUser(new User(null, 27, "Darja", "Petrova"));
-		us.addUser(new User(null, 33, "Svetlana", "Sinicina"));
-		us.addUser(new User(null, 31, "Olga", "Petuhova"));
-		us.addUser(new User(null, 25, "Natalja", "Durova"));
+		SpringApplication.run(TrelloApplication.class, args);
 
 	}
 }

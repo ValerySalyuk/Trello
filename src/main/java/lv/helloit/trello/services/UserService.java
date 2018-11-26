@@ -1,53 +1,58 @@
 package lv.helloit.trello.services;
 
+import lv.helloit.trello.dto.dao.UsersDAO;
 import lv.helloit.trello.dto.user.User;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @Component
 public class UserService {
 
-    private Map<Long, User> userMap = new HashMap<>();
-    private Long lastId = 0L;
+    private final UsersDAO usersDAO;
 
-    public Long addUser(User user) {
-        ++lastId;
-        user.setId(lastId);
-        userMap.put(lastId, user);
-        return lastId;
+    @Autowired
+    public UserService(UsersDAO usersDAO) {
+        this.usersDAO = usersDAO;
     }
 
-    public boolean userExists(Long id) {
-        return userMap.containsKey(id);
+    public void addUser(User user) {
+        usersDAO.insert(user);
     }
 
-    public Collection<User> userList() {
-        return userMap.values();
+//    public boolean userExists(Long id) {
+//        return userMap.containsKey(id);
+//    }
+
+    public List<User> userList() {
+        return new ArrayList<>(usersDAO.getAll());
     }
 
     public User getUser(Long id) {
-        if (userExists(id)) {
-            return userMap.get(id);
+        Optional<User> user = usersDAO.getById(id);
+        if (user.isPresent()) {
+            return user.get();
         } else {
             return null;
         }
     }
 
-    public boolean updateUser(Long id, User u) {
-        if (userExists(id)) {
-            u.setId(id);
-            userMap.replace(id, u);
+    public boolean updateUser(Long userId, User newUser) {
+        if (!userId.equals(newUser.getId()) && newUser.getId() != null) {
+            return false;
+        }
+
+        if (usersDAO.getById(userId).isPresent()) {
+            usersDAO.update(userId, newUser);
             return true;
         }
         return false;
     }
 
-    public boolean deleteUser(Long id) {
-        if (userExists(id)) {
-            userMap.remove(id);
+    public boolean deleteUser(Long userId) {
+        if (usersDAO.getById(userId).isPresent()) {
+            usersDAO.delete(userId);
             return true;
         }
         return false;

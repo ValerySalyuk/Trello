@@ -64,16 +64,16 @@ public class TaskController {
         return taskService.assignUser(id, userId);
     }
 
-    @PutMapping("/setstatus/{id}")
-    public boolean setStatus(@PathVariable Long id, @RequestParam("status") String status) {
-        LOGGER.info("Added status to task No. " + id);
-        return taskService.updateStatus(id, status);
-    }
+//    @PutMapping("/setstatus/{id}")
+//    public boolean setStatus(@PathVariable Long id, @RequestParam("status") String status) {
+//        LOGGER.info("Added status to task No. " + id);
+//        return taskService.updateStatus(id, status);
+//    }
 
-    @GetMapping("/getuser/{id}")
-    public User getUser(@PathVariable Long id) {
-        LOGGER.info("Returned user assigned to task No. " + id);
-        return taskService.getTaskUser(userService, id);
-    }
+//    @GetMapping("/getuser/{id}")
+//    public User getUser(@PathVariable Long id) {
+//        LOGGER.info("Returned user assigned to task No. " + id);
+//        return taskService.getTaskUser(userService, id);
+//    }
 
 }

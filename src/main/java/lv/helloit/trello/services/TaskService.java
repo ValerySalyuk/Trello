@@ -1,5 +1,6 @@
 package lv.helloit.trello.services;
 
+import lv.helloit.trello.dto.dao.TasksDAO;
 import lv.helloit.trello.dto.task.Task;
 import lv.helloit.trello.dto.task.TaskStatus;
 import lv.helloit.trello.dto.task.TaskView;
@@ -7,96 +8,107 @@ import lv.helloit.trello.dto.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
 public class TaskService {
 
+    private final UserService userService;
+    private final TasksDAO tasksDAO;
+
     @Autowired
-    private UserService userService;
-
-    private Map<Long, Task> taskMap = new HashMap<>();
-    private Long lastId = 0L;
-
-    public Long addTask(Task task) {
-        task.setId(++lastId);
-        task.setTaskStatus(TaskStatus.TODO);
-        taskMap.put(lastId, task);
-        return lastId;
+    public TaskService(UserService userService, TasksDAO tasksDAO) {
+        this.userService = userService;
+        this.tasksDAO = tasksDAO;
     }
 
-    public boolean taskExists(Long id) {
-        return taskMap.containsKey(id);
+    public void addTask(Task task) {
+        task.setTaskStatus(TaskStatus.TODO);
+        tasksDAO.insert(task);
+    }
+
+//    public boolean taskExists(Long id) {
+//        return taskMap.containsKey(id);
+//    }
+
+    private TaskView mapToTaskView(Task task) {
+        User user = userService.getUser(task.getAssignedUserId());
+
+        return new TaskView(
+                task.getId(),
+                task.getTitle(),
+                task.getDescription(),
+                task.getAssignedUserId(),
+                task.getTaskStatus(),
+                user == null ? null : user.getName() + " " + user.getLastName());
     }
 
     public List<TaskView> getTasks() {
-        return taskMap.values().stream().map(task -> {
-            User user = userService.getUser(task.getAssignedUserId());
-
-            return new TaskView(
-                    task.getId(),
-                    task.getTitle(),
-                    task.getDescription(),
-                    task.getAssignedUserId(),
-                    task.getTaskStatus(),
-                    user == null ? null : user.getName() + " " + user.getLastName()
-            );
-        }).collect(Collectors.toList());
+        return tasksDAO.getAll().stream().map(this::mapToTaskView).collect(Collectors.toList());
     }
 
     public Task getTask(Long id) {
-        if (taskExists(id)) {
-            return taskMap.get(id);
+        Optional<Task> task = tasksDAO.getById(id);
+
+        if (task.isPresent()) {
+            return mapToTaskView(task.get());
         } else {
             return null;
         }
     }
 
-    public boolean updateTask(Long id, Task task) {
-        if (taskExists(id)) {
-            task.setId(id);
-            task.setTaskStatus(taskMap.get(id).getTaskStatus());
-            taskMap.replace(id, task);
-            return true;
+    public boolean updateTask(Long taskId, Task newTask) {
+        if (!taskId.equals(newTask.getId()) && newTask.getId() != null) {
+            return false;
         }
-        return false;
+
+        Optional<Task> oldTask = tasksDAO.getById(taskId);
+        if (oldTask.isPresent()) {
+            newTask.setTaskStatus(oldTask.get().getTaskStatus());
+            tasksDAO.update(taskId, newTask);
+        }
+        return true;
     }
 
     public boolean deleteTask(Long id) {
-        if (taskExists(id)) {
-            taskMap.remove(id);
+        if (tasksDAO.getById(id).isPresent()) {
+            tasksDAO.delete(id);
             return true;
         }
         return false;
     }
 
     public boolean assignUser(Long taskId, Long userId) {
-        if (taskExists(taskId) && userService.userExists(userId)) {
-            taskMap.get(taskId).setAssignedUserId(userId);
-            return true;
-        }
-        return false;
-    }
 
-    public User getTaskUser(UserService userService, Long taskId) {
-        if (taskExists(taskId)) {
-            return userService.getUser(taskMap.get(taskId).getAssignedUserId());
+        Optional<Task> task = tasksDAO.getById(taskId);
+
+        if (task.isPresent()) {
+            Task unwrapped = task.get();
+            unwrapped.setAssignedUserId(userId);
+
+            tasksDAO.update(taskId, unwrapped);
+            return true;
         } else {
-            return null;
+            return false;
         }
-
     }
 
-    public boolean updateStatus(Long taskId, String newStatus) {
-        if (taskExists(taskId) && TaskStatus.contains(newStatus)) {
-            taskMap.get(taskId).setTaskStatus(TaskStatus.valueOf(newStatus.toUpperCase()));
-            return true;
-        }
-        return false;
-    }
+//    public User getTaskUser(UserService userService, Long taskId) {
+//        if (taskExists(taskId)) {
+//            return userService.getUser(taskMap.get(taskId).getAssignedUserId());
+//        } else {
+//            return null;
+//        }
+//
+//    }
+
+//    public boolean updateStatus(Long taskId, String newStatus) {
+//        if (taskExists(taskId) && TaskStatus.contains(newStatus)) {
+//            taskMap.get(taskId).setTaskStatus(TaskStatus.valueOf(newStatus.toUpperCase()));
+//            return true;
+//        }
+//        return false;
+//    }
 
 }

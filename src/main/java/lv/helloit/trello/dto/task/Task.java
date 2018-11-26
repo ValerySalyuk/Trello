@@ -15,7 +15,7 @@ public class Task {
         this.id = id;
         this.title = title;
         this.description = description;
-        //this.assignedUserId = assignedUserId;
+        this.assignedUserId = assignedUserId;
         this.taskStatus = taskStatus;
     }
 

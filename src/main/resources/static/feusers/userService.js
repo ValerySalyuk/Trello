@@ -27,18 +27,22 @@ function addUser(user) {
 function createUser() {
     const name = document.getElementById("name").value;
     const lastName = document.getElementById("lastName").value;
+    const age = document.getElementById("age").value;
+
+    console.log(age);
 
     fetch("/users/add", {
         method: "post",
         body: JSON.stringify({
             name: name,
-            lastName: lastName
+            lastName: lastName,
+            age: age
         }),
         headers: {
             "Content-Type": "application/json;charset=UTF-8"
         }
     }).then(() => {
-        window.location.href = "/users.html";
+        window.location.href = "/feusers/users.html";
     });
 }
 
