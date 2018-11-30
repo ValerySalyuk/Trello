@@ -1,19 +1,19 @@
 package lv.helloit.trello.services;
 
-import lv.helloit.trello.dto.dao.UsersDAO;
+import lv.helloit.trello.dto.dao.UsersDAOImplementation;
 import lv.helloit.trello.dto.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.*;
 
-@Component
+@Service
 public class UserService {
 
-    private final UsersDAO usersDAO;
+    private final UsersDAOImplementation usersDAO;
 
     @Autowired
-    public UserService(UsersDAO usersDAO) {
+    public UserService(UsersDAOImplementation usersDAO) {
         this.usersDAO = usersDAO;
     }
 
@@ -21,9 +21,6 @@ public class UserService {
         usersDAO.insert(user);
     }
 
-//    public boolean userExists(Long id) {
-//        return userMap.containsKey(id);
-//    }
 
     public List<User> userList() {
         return new ArrayList<>(usersDAO.getAll());
@@ -38,16 +35,9 @@ public class UserService {
         }
     }
 
-    public boolean updateUser(Long userId, User newUser) {
-        if (!userId.equals(newUser.getId()) && newUser.getId() != null) {
-            return false;
-        }
-
-        if (usersDAO.getById(userId).isPresent()) {
-            usersDAO.update(userId, newUser);
-            return true;
-        }
-        return false;
+    public boolean updateUser(User newUser) {
+        usersDAO.update(newUser);
+        return true;
     }
 
     public boolean deleteUser(Long userId) {

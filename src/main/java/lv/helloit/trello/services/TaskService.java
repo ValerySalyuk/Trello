@@ -1,36 +1,34 @@
 package lv.helloit.trello.services;
 
-import lv.helloit.trello.dto.dao.TasksDAO;
+import lv.helloit.trello.dto.dao.TasksDAOImplementation;
 import lv.helloit.trello.dto.task.Task;
-import lv.helloit.trello.dto.task.TaskStatus;
 import lv.helloit.trello.dto.task.TaskView;
 import lv.helloit.trello.dto.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
-@Component
+@Service
 public class TaskService {
 
     private final UserService userService;
-    private final TasksDAO tasksDAO;
+    private final TasksDAOImplementation tasksDAO;
 
     @Autowired
-    public TaskService(UserService userService, TasksDAO tasksDAO) {
+    public TaskService(UserService userService, TasksDAOImplementation tasksDAO) {
         this.userService = userService;
         this.tasksDAO = tasksDAO;
     }
 
-    public void addTask(Task task) {
-        task.setTaskStatus(TaskStatus.TODO);
-        tasksDAO.insert(task);
+    public Long addTask(Task task) {
+        task.setTaskStatus("To do");
+        task.setCreatedDate(new Date());
+        return tasksDAO.insert(task);
     }
-
-//    public boolean taskExists(Long id) {
-//        return taskMap.containsKey(id);
-//    }
 
     private TaskView mapToTaskView(Task task) {
         User user = userService.getUser(task.getAssignedUserId());
@@ -41,6 +39,7 @@ public class TaskService {
                 task.getDescription(),
                 task.getAssignedUserId(),
                 task.getTaskStatus(),
+                task.getCreatedDate(),
                 user == null ? null : user.getName() + " " + user.getLastName());
     }
 
@@ -58,16 +57,12 @@ public class TaskService {
         }
     }
 
-    public boolean updateTask(Long taskId, Task newTask) {
-        if (!taskId.equals(newTask.getId()) && newTask.getId() != null) {
-            return false;
-        }
-
-        Optional<Task> oldTask = tasksDAO.getById(taskId);
-        if (oldTask.isPresent()) {
-            newTask.setTaskStatus(oldTask.get().getTaskStatus());
-            tasksDAO.update(taskId, newTask);
-        }
+    public boolean updateTask(Task newTask) {
+        Task oldTask = tasksDAO.getById(newTask.getId()).get();
+        newTask.setTaskStatus(oldTask.getTaskStatus());
+        newTask.setCreatedDate(oldTask.getCreatedDate());
+        newTask.setAssignedUserId(oldTask.getAssignedUserId());
+        tasksDAO.update(newTask);
         return true;
     }
 
@@ -87,28 +82,11 @@ public class TaskService {
             Task unwrapped = task.get();
             unwrapped.setAssignedUserId(userId);
 
-            tasksDAO.update(taskId, unwrapped);
+            tasksDAO.update(unwrapped);
             return true;
         } else {
             return false;
         }
     }
-
-//    public User getTaskUser(UserService userService, Long taskId) {
-//        if (taskExists(taskId)) {
-//            return userService.getUser(taskMap.get(taskId).getAssignedUserId());
-//        } else {
-//            return null;
-//        }
-//
-//    }
-
-//    public boolean updateStatus(Long taskId, String newStatus) {
-//        if (taskExists(taskId) && TaskStatus.contains(newStatus)) {
-//            taskMap.get(taskId).setTaskStatus(TaskStatus.valueOf(newStatus.toUpperCase()));
-//            return true;
-//        }
-//        return false;
-//    }
 
 }

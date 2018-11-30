@@ -50,7 +50,7 @@ public class UserController {
     @PutMapping("/update/{id}")
     public boolean update(@PathVariable Long id, @RequestBody User user) {
         LOGGER.info("Request for user No.: " + id + " update");
-        return userService.updateUser(id, user);
+        return userService.updateUser(user);
     }
 
 }

@@ -1,7 +1,6 @@
 //package lv.helloit.trello.services;
 //
 //import lv.helloit.trello.dto.task.Task;
-//import lv.helloit.trello.dto.task.TaskStatus;
 //import lv.helloit.trello.dto.user.User;
 //import org.junit.Before;
 //import org.junit.Test;
@@ -15,8 +14,6 @@
 //
 //import javax.jws.soap.SOAPBinding;
 //
-//import static lv.helloit.trello.dto.task.TaskStatus.DONE;
-//import static lv.helloit.trello.dto.task.TaskStatus.TODO;
 //import static org.junit.Assert.*;
 //import static org.mockito.ArgumentMatchers.nullable;
 //import static org.mockito.Mockito.when;
@@ -104,9 +101,9 @@
 //    public void shouldUpdateStatus() {
 //        victim.addTask(task);
 //        victim.updateStatus(TASK_ID, "hello");
-//        assertEquals(TODO, victim.getTask(TASK_ID).getTaskStatus());
-//        victim.updateStatus(TASK_ID, "DoNE");
-//        assertEquals(TaskStatus.DONE, victim.getTask(TASK_ID).getTaskStatus());
+//        assertEquals("To do", victim.getTask(TASK_ID).getTaskStatus());
+//        victim.updateStatus(TASK_ID, "Done");
+//        assertEquals("Done", victim.getTask(TASK_ID).getTaskStatus());
 //    }
 //
 //}
