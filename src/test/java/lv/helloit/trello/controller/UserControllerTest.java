@@ -20,13 +20,13 @@ public class UserControllerTest {
     @Test
     public void shouldCreateUser() {
 
-//        userService.addUser(new User(null, 25, "TestName", "TestSurname"));
-//
-//        User user = userService.getUser(1L);
-//
-//        assertThat(user.getName()).isEqualTo("TestName");
-//        assertThat(user.getLastName()).isEqualTo("TestSurname");
-//        assertThat(user.getAge()).isEqualTo(25);
+        Long newId = userService.addUser(new User(null, 25, "TestName", "TestSurname"));
+
+        User user = userService.getUser(newId);
+
+        assertThat(user.getName()).isEqualTo("TestName");
+        assertThat(user.getLastName()).isEqualTo("TestSurname");
+        assertThat(user.getAge()).isEqualTo(25);
 
     }
 

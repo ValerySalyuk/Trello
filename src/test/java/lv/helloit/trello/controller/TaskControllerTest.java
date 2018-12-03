@@ -8,6 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -19,9 +20,9 @@ public class TaskControllerTest {
     @Test
     public void shouldCreateTask() {
 
-        taskController.add(new Task(null, "Title", "Description", null, null));
+        Long newId = taskController.add(new Task(null, "Title", "Description", null, null, null));
 
-        Task task = taskController.particularTask(1L);
+        Task task = taskController.particularTask(newId);
 
         assertThat(task.getTitle()).isEqualTo("Title");
         assertThat(task.getDescription()).isEqualTo("Description");

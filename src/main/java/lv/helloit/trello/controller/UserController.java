@@ -36,9 +36,9 @@ public class UserController {
     }
 
     @PostMapping("/add")
-    public void add(@RequestBody User user) {
-        userService.addUser(user);
+    public Long add(@RequestBody User user) {
         LOGGER.info("New user " + user.getName() + " " + user.getLastName() + " added");
+        return userService.addUser(user);
     }
 
     @DeleteMapping("/delete/{id}")

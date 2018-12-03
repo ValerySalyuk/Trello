@@ -37,9 +37,9 @@ public class TaskController {
     }
 
     @PostMapping("/add")
-    public void add(@RequestBody Task task) {
-        taskService.addTask(task);
+    public Long add(@RequestBody Task task) {
         LOGGER.info("New task with title: '" + task.getTitle() + "' added");
+        return taskService.addTask(task);
     }
 
     @PutMapping("/update/{id}")

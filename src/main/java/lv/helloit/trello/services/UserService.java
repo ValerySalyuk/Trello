@@ -17,8 +17,8 @@ public class UserService {
         this.usersDAO = usersDAO;
     }
 
-    public void addUser(User user) {
-        usersDAO.insert(user);
+    public Long addUser(User user) {
+        return usersDAO.insert(user);
     }
 
 
