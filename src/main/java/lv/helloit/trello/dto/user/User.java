@@ -5,11 +5,14 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lv.helloit.trello.dto.task.Task;
 
 import javax.persistence.*;
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import java.util.List;
 import java.util.Objects;
 
 @Entity
 @Table(name = "VS_USERS")
+@Valid
 public class User {
 
     @Id
@@ -23,6 +26,7 @@ public class User {
     @Column(name = "last_name")
     private String lastName;
     @Column(name = "username")
+    @NotBlank
     private String username;
     @Column(name = "password_hash")
     @JsonIgnore
