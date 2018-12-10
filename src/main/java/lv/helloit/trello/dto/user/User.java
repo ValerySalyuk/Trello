@@ -1,6 +1,11 @@
 package lv.helloit.trello.dto.user;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import lv.helloit.trello.dto.task.Task;
+
 import javax.persistence.*;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -8,7 +13,7 @@ import java.util.Objects;
 public class User {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "id")
     private Long id;
     @Column(name = "age")
@@ -17,15 +22,25 @@ public class User {
     private String name;
     @Column(name = "last_name")
     private String lastName;
+    @Column(name = "username")
+    private String username;
+    @Column(name = "password_hash")
+    @JsonIgnore
+    private String passwordHash;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    @JsonManagedReference
+    private List<Task> tasks;
 
     public User() {
     }
 
-    public User(Long id, Integer age, String name, String lastName) {
-        this.id = id;
+    public User(Integer age, String name, String lastName, String username, String passwordHash) {
         this.age = age;
         this.name = name;
         this.lastName = lastName;
+        this.username = username;
+        this.passwordHash = passwordHash;
     }
 
     @Override
@@ -35,6 +50,8 @@ public class User {
                 ", age=" + age +
                 ", name='" + name + '\'' +
                 ", lastName='" + lastName + '\'' +
+                ", username='" + username + '\'' +
+                ", tasks=" + tasks +
                 '}';
     }
 
@@ -46,12 +63,37 @@ public class User {
         return Objects.equals(id, user.id) &&
                 Objects.equals(age, user.age) &&
                 Objects.equals(name, user.name) &&
-                Objects.equals(lastName, user.lastName);
+                Objects.equals(lastName, user.lastName) &&
+                Objects.equals(username, user.username);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, age, name, lastName);
+        return Objects.hash(id, age, name, lastName, username);
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPasswordHash() {
+        return passwordHash;
+    }
+
+    public void setPasswordHash(String passwordHash) {
+        this.passwordHash = passwordHash;
+    }
+
+    public List<Task> getTasks() {
+        return tasks;
+    }
+
+    public void setTasks(List<Task> tasks) {
+        this.tasks = tasks;
     }
 
     public void setId(Long id) {

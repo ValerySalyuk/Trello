@@ -1,26 +1,30 @@
 function loadTasks() {
     fetch("/tasks", {
-        method: "get"})
-        .then(resp => resp.json())
-        .then(tasks => {
-            for (const task of tasks) {
-                addTask(task);
-            }
-        });
+        method: "get",
+        headers: {
+            'Authorization': 'Basic ' + btoa("login_user:VWRYDQE2")
+        }
+    }).then(
+        resp => resp.json()
+    ).then(tasks => {
+        for (const task of tasks) {
+            addTask(task);
+        }
+    });
 }
 
 function addTask(task) {
     // if (task.assignedUserId != null) {
-    //     //     fetch("/tasks/getuser/" + task.id, {
-    //     //         method: "get"
-    //     //     })
-    //     //         .then(resp => resp.json())
-    //     //         .then(user => {
-    //     //             console.log("Inside fetch. User name: " + user.name);
-    //     //             //fetchedUser = user;
-    //     //             console.log("Inside fetch. User: " /*+ fetchedUser*/);
-    //     //         });
-    //     // }
+    //         fetch("/tasks/getuser/" + task.id, {
+    //             method: "get"
+    //         })
+    //             .then(resp => resp.json())
+    //             .then(user => {
+    //                 console.log("Inside fetch. User name: " + user.name);
+    //                 //fetchedUser = user;
+    //                 console.log("Inside fetch. User: " /*+ fetchedUser*/);
+    //             });
+    //     }
 
     const tr = document.createElement("tr");
     tr.innerHTML = `
@@ -28,7 +32,7 @@ function addTask(task) {
         <td>${task.title}</td>
         <td>${task.description}</td>
         <td>${task.taskStatus}</td>
-        <td>${task.userName}</td>
+        <td>${task.user ? task.user.name + " " + task.user.lastName : ""}</td>
         <td>
             <button onclick="deleteTask(${task.id})">Delete</button>|
             <a href="/fetasks/editTask.html?taskId=${task.id}">Edit</a>|
@@ -48,15 +52,21 @@ function createTask() {
             description: description
         }),
         headers: {
-            "Content-Type": "application/json;charset=UTF-8"
+            "Content-Type": "application/json;charset=UTF-8",
+            'Authorization': 'Basic ' + btoa("login_user:VWRYDQE2")
         }
     }).then(() => {
-        window.location.href = "/index.html";
+        window.location.href = "/index.html"; //index.html
     });
 }
 
 function deleteTask(id) {
-    fetch("/tasks/delete/" + id, {method: "delete"})
+    fetch("/tasks/delete/" + id, {
+            method: "delete",
+            headers: {
+                'Authorization': 'Basic ' + btoa("login_user:VWRYDQE2")
+            }
+        })
         .then((resp) => resp.json())
         .then(successful => {
             if (successful === true) {
@@ -91,12 +101,13 @@ function updateTask() {
             description: description
         }),
         headers: {
-            "Content-Type": "application/json;charset=UTF-8"
+            "Content-Type": "application/json;charset=UTF-8",
+            'Authorization': 'Basic ' + btoa("login_user:VWRYDQE2")
         }
     }).then(resp => resp.json())
         .then(successful => {
             if (successful) {
-                window.location.href = "/index.html";
+                window.location.href = "/index.html"; //index.html
             } else {
                 alert("Failed to update");
             }
@@ -136,13 +147,14 @@ function assignUser(userId) {
     fetch(url, {
         method: "put",
         headers: {
-            "Content-Type": "application/json;charset=UTF-8"
+            "Content-Type": "application/json;charset=UTF-8",
+            'Authorization': 'Basic ' + btoa("login_user:VWRYDQE2")
         }
     })
         .then(resp => resp.json())
         .then(successful => {
             if (successful) {
-                window.location.href = "/index.html";
+                window.location.href = "/index.html"; //index.html
             } else {
                 alert("Failed to assign user");
             }

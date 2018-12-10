@@ -12,9 +12,9 @@ import java.util.Optional;
 
 public abstract class DAOImplementation<T> implements DAO<T> {
 
-    private final SessionFactory sessionFactory;
+    protected final SessionFactory sessionFactory;
 
-    public DAOImplementation(SessionFactory sessionFactory) {
+    protected DAOImplementation(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
     }
 
@@ -29,7 +29,7 @@ public abstract class DAOImplementation<T> implements DAO<T> {
         query.select(root);
 
         List<T> tList = session.createQuery(query).getResultList();
-        session.close();
+        //session.close();
 
         return tList;
 

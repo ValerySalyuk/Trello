@@ -1,5 +1,8 @@
 package lv.helloit.trello.dto.task;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import lv.helloit.trello.dto.user.User;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Date;
@@ -17,8 +20,15 @@ public class Task {
     private String title;
     @Column(name = "description")
     private String description;
-    @Column(name = "assigned_user_id")
-    private Long assignedUserId;
+
+//    @Column(name = "assigned_user_id")
+//    private Long assignedUserId;
+
+    @ManyToOne
+    @JoinColumn(name = "assigned_user_id")
+    @JsonBackReference
+    private User user;
+
     @Column(name = "status")
     private String taskStatus;
     @Column(name = "created_date")
@@ -27,13 +37,24 @@ public class Task {
     public Task() {
     }
 
-    public Task(Long id, String title, String description, Long assignedUserId, String taskStatus, Date createdDate) {
-        this.id = id;
+    public Task(String title, String description, User user, String taskStatus, Date createdDate) {
         this.title = title;
         this.description = description;
-        this.assignedUserId = assignedUserId;
+        this.user = user;
         this.taskStatus = taskStatus;
         this.createdDate = createdDate;
+    }
+
+    @Override
+    public String toString() {
+        return "Task{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", user=" + (user != null ? user.getId() : "") +
+                ", taskStatus='" + taskStatus + '\'' +
+                ", createdDate=" + createdDate +
+                '}';
     }
 
     @Override
@@ -44,26 +65,22 @@ public class Task {
         return Objects.equals(id, task.id) &&
                 Objects.equals(title, task.title) &&
                 Objects.equals(description, task.description) &&
-                Objects.equals(assignedUserId, task.assignedUserId) &&
+                Objects.equals(user.getId(), task.user.getId()) &&
                 Objects.equals(taskStatus, task.taskStatus) &&
                 Objects.equals(createdDate, task.createdDate);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, description, assignedUserId, taskStatus, createdDate);
+        return Objects.hash(id, title, description, user.getId(), taskStatus, createdDate);
     }
 
-    @Override
-    public String toString() {
-        return "Task{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", description='" + description + '\'' +
-                ", assignedUserId=" + assignedUserId +
-                ", taskStatus='" + taskStatus + '\'' +
-                ", createdDate=" + createdDate +
-                '}';
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public Date getCreatedDate() {
@@ -98,13 +115,13 @@ public class Task {
         this.description = description;
     }
 
-    public Long getAssignedUserId() {
-        return assignedUserId;
-    }
+//    public Long getAssignedUserId() {
+//        return assignedUserId;
+//    }
 
-    public void setAssignedUserId(Long assignedUserId) {
-        this.assignedUserId = assignedUserId;
-    }
+//    public void setAssignedUserId(Long assignedUserId) {
+//        this.assignedUserId = assignedUserId;
+//    }
 
     public String getTaskStatus() {
         return taskStatus;

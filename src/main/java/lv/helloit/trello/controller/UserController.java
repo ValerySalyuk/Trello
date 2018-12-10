@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/users")
@@ -30,7 +31,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public User particularUser(@PathVariable Long id) {
+    public Optional<User> particularUser(@PathVariable Long id) {
         LOGGER.info("Request for user No.: " + id);
         return userService.getUser(id);
     }

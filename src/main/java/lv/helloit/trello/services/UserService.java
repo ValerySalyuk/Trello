@@ -1,51 +1,97 @@
 package lv.helloit.trello.services;
 
+import lv.helloit.trello.SecurityPropertiesBean;
+import lv.helloit.trello.dto.dao.TasksDAOImplementation;
 import lv.helloit.trello.dto.dao.UsersDAOImplementation;
+import lv.helloit.trello.dto.task.Task;
 import lv.helloit.trello.dto.user.User;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.token.Sha512DigestUtils;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserService {
 
-    private final UsersDAOImplementation usersDAO;
+    private final Logger LOGGER = LoggerFactory.getLogger(UserService.class);
+    private final UsersDAOImplementation usersDAOImplementation;
+    private final TasksDAOImplementation tasksDAOImplementation;
+    private final SecurityPropertiesBean securityPropertiesBean;
 
     @Autowired
-    public UserService(UsersDAOImplementation usersDAO) {
-        this.usersDAO = usersDAO;
+    public UserService(UsersDAOImplementation usersDAOImplementation,
+                       TasksDAOImplementation tasksDAOImplementation,
+                       SecurityPropertiesBean securityPropertiesBean) {
+        this.usersDAOImplementation = usersDAOImplementation;
+        this.tasksDAOImplementation = tasksDAOImplementation;
+        this.securityPropertiesBean = securityPropertiesBean;
     }
 
     public Long addUser(User user) {
-        return usersDAO.insert(user);
-    }
 
+        String password = generatePassword();
+        LOGGER.info("Password: " + password);
+        sendPasswordEmail(user, password);
+        String passwordHash = generatePasswordHash(password);
+        LOGGER.info("Password hash: " + passwordHash);
+        user.setPasswordHash(passwordHash);
+
+        return usersDAOImplementation.insert(user);
+    }
 
     public List<User> userList() {
-        return new ArrayList<>(usersDAO.getAll());
+        return new ArrayList<>(usersDAOImplementation.getAll());
     }
 
-    public User getUser(Long id) {
-        Optional<User> user = usersDAO.getById(id);
-        if (user.isPresent()) {
-            return user.get();
-        } else {
-            return null;
-        }
+    public Optional<User> getUser(Long id) {
+        return usersDAOImplementation.getById(id);
+    }
+
+    public Optional<User> getUser(String username) {
+        return usersDAOImplementation.getByUsername(username);
     }
 
     public boolean updateUser(User newUser) {
-        usersDAO.update(newUser);
+        usersDAOImplementation.update(newUser);
         return true;
     }
 
     public boolean deleteUser(Long userId) {
-        if (usersDAO.getById(userId).isPresent()) {
-            usersDAO.delete(userId);
+        if (usersDAOImplementation.getById(userId).isPresent()) {
+            usersDAOImplementation.delete(userId);
             return true;
         }
         return false;
+    }
+
+    public void assignTask(Long userId, Long taskId) {
+        Optional<User> wrappedUser = this.getUser(userId);
+        Optional<Task> wrappedTask = tasksDAOImplementation.getById(taskId);
+
+        if (wrappedTask.isPresent() && wrappedUser.isPresent()) {
+            User user = wrappedUser.get();
+            user.getTasks().add(wrappedTask.get());
+
+            usersDAOImplementation.update(user);
+        }
+    }
+
+    private String generatePassword() {
+        return RandomStringUtils.random(8, true, true);
+    }
+
+    private void sendPasswordEmail(User user, String password) {
+        // todo implement
+    }
+
+    private String generatePasswordHash(String password) {
+        return Sha512DigestUtils.shaHex(password + securityPropertiesBean.getSalt());
     }
 
 }

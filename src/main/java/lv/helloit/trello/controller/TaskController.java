@@ -1,8 +1,6 @@
 package lv.helloit.trello.controller;
 
-import lv.helloit.trello.dto.task.TaskView;
 import lv.helloit.trello.services.TaskService;
-import lv.helloit.trello.services.UserService;
 import lv.helloit.trello.dto.task.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/tasks")
@@ -25,13 +24,13 @@ public class TaskController {
     }
 
     @GetMapping
-    public Collection<TaskView> allTasks() {
+    public Collection<Task> allTasks() {
         LOGGER.info(taskService.getTasks().size() + " tasks returned");
         return taskService.getTasks();
     }
 
     @GetMapping("/{id}")
-    public Task particularTask(@PathVariable Long id) {
+    public Optional<Task> particularTask(@PathVariable Long id) {
         LOGGER.info("Returned Task No.: " + id);
         return taskService.getTask(id);
     }

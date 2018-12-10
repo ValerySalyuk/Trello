@@ -1,6 +1,7 @@
 package lv.helloit.trello.dto.dao;
 
 import lv.helloit.trello.dto.task.Task;
+
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -27,4 +28,5 @@ public class TasksDAOImplementation extends DAOImplementation<Task> {
     public void delete(Long taskId) {
         super.delete(taskId, Task.class);
     }
+
 }

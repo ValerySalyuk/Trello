@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.Optional;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
@@ -15,18 +17,25 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class UserControllerTest {
 
     @Autowired
-    private UserService userService;
+    private UserController userController;
 
     @Test
     public void shouldCreateUser() {
 
-        Long newId = userService.addUser(new User(null, 25, "TestName", "TestSurname"));
+        User input = new User();
+        input.setName("Name");
+        input.setLastName("Last Name");
+        input.setAge(25);
 
-        User user = userService.getUser(newId);
+        Long id = userController.add(input);
 
-        assertThat(user.getName()).isEqualTo("TestName");
-        assertThat(user.getLastName()).isEqualTo("TestSurname");
-        assertThat(user.getAge()).isEqualTo(25);
+        Optional<User> user = userController.particularUser(id);
+
+        assertThat(user).isPresent();
+
+        assertThat(user.get().getName()).isEqualTo("Name");
+        assertThat(user.get().getLastName()).isEqualTo("Last Name");
+        assertThat(user.get().getAge()).isEqualTo(25);
 
     }
 

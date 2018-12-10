@@ -1,109 +1,50 @@
-//package lv.helloit.trello.services;
-//
-//import lv.helloit.trello.dto.task.Task;
-//import lv.helloit.trello.dto.user.User;
-//import org.junit.Before;
-//import org.junit.Test;
-//import org.junit.runner.RunWith;
-//import org.mockito.InjectMocks;
-//import org.mockito.Mock;
-//import org.mockito.junit.MockitoJUnitRunner;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.boot.test.context.SpringBootTest;
-//import org.springframework.test.context.junit4.SpringRunner;
-//
-//import javax.jws.soap.SOAPBinding;
-//
-//import static org.junit.Assert.*;
-//import static org.mockito.ArgumentMatchers.nullable;
-//import static org.mockito.Mockito.when;
-//
-//@RunWith(MockitoJUnitRunner.class)
-//public class TaskServiceTest {
-//
-//    private final Long TASK_ID = 1L;
-//    private final Long USER_ID = 1L;
-//    private Task task;
-//
-//    @Mock
-//    private UserService userService;
-//
-//    @InjectMocks
-//    private TaskService victim;
-//
-//    @Before
-//    public void serUp() {
-//        task = new Task(null, "Task 1", "Test task",  null);
-//        when(userService.userExists(USER_ID)).thenReturn(true);
-//    }
-//
-//    @Test
-//    public void shouldAddNewTask() {
-//
-//        Long taskId = victim.addTask(task);
-//        assertEquals(TASK_ID, taskId);
-//
-//    }
-//
-//    @Test
-//    public void taskShouldExist() {
-//
-//        assertFalse(victim.taskExists(TASK_ID));
-//        victim.addTask(task);
-//        assertTrue(victim.taskExists(TASK_ID));
-//
-//    }
-//
-//    @Test
-//    public void shouldReturnTask() {
-//
-//        assertNull(victim.getTask(TASK_ID));
-//        victim.addTask(task);
-//        assertNotNull(victim.getTask(TASK_ID));
-//
-//    }
-//
-//    @Test
-//    public void shouldUpdateTask() {
-//        victim.addTask(task);
-//        Task task2 = new Task(null, "Task updated", "Updated task", null);
-//        victim.updateTask(TASK_ID, task2);
-//        assertEquals("Updated task" , victim.getTask(TASK_ID).getDescription());
-//    }
-//
-//    @Test
-//    public void shouldDeleteTask() {
-//        assertFalse(victim.taskExists(TASK_ID));
-//        victim.addTask(task);
-//        assertTrue(victim.taskExists(TASK_ID));
-//        victim.deleteTask(TASK_ID);
-//        assertFalse(victim.taskExists(TASK_ID));
-//    }
-//
-//    @Test
-//    public void shouldAssignUser() {
-//
-//        victim.addTask(task);
-//        victim.assignUser(TASK_ID, USER_ID);
-//        assertEquals(USER_ID, victim.getTask(TASK_ID).getAssignedUserId());
-//
-//    }
-//
-//    @Test
-//    public void shouldGetTaskUser() {
-//        victim.addTask(task);
-//        victim.assignUser(TASK_ID, USER_ID);
-//        assertEquals(USER_ID, victim.getTask(TASK_ID).getAssignedUserId());
-//        assertNull(victim.getTaskUser(userService, TASK_ID));
-//    }
-//
-//    @Test
-//    public void shouldUpdateStatus() {
-//        victim.addTask(task);
-//        victim.updateStatus(TASK_ID, "hello");
-//        assertEquals("To do", victim.getTask(TASK_ID).getTaskStatus());
-//        victim.updateStatus(TASK_ID, "Done");
-//        assertEquals("Done", victim.getTask(TASK_ID).getTaskStatus());
-//    }
-//
-//}
+package lv.helloit.trello.services;
+
+import lv.helloit.trello.dto.task.Task;
+import lv.helloit.trello.dto.user.User;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
+
+import java.util.Date;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+@RunWith(SpringRunner.class)
+@SpringBootTest
+public class TaskServiceTest {
+
+    @Autowired
+    private TaskService taskService;
+
+    @Autowired
+    private UserService userService;
+
+    @Test
+    public void shouldUnassignUser() {
+
+        Task task = new Task();
+        task.setCreatedDate(new Date());
+        task.setTitle("Title");
+        task.setDescription("Description");
+        Long taskId = taskService.addTask(task);
+
+        User user = new User();
+        user.setName("Name");
+        user.setLastName("Last Name");
+        user.setAge(25);
+        Long userId = userService.addUser(user);
+
+        taskService.assignUser(taskId, userId);
+        Task taskFromDBWithUser = taskService.getTask(taskId).get();
+        assertThat(taskFromDBWithUser.getUser()).isNotNull();
+
+        taskService.unassignUser(taskId);
+        Task taskFromDBNoUser = taskService.getTask(taskId).get();
+        assertThat(taskFromDBNoUser.getUser()).isNull();
+
+    }
+
+}

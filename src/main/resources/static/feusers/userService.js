@@ -1,6 +1,10 @@
 function loadUsers() {
     fetch("/users", {
-        method: "get"})
+        method: "get",
+        headers: {
+            'Authorization': 'Basic ' + btoa("login_user:VWRYDQE2")
+        }
+    })
         .then(resp => resp.json())
         .then(users => {
             for (const user of users) {
@@ -28,6 +32,7 @@ function createUser() {
     const name = document.getElementById("name").value;
     const lastName = document.getElementById("lastName").value;
     const age = document.getElementById("age").value;
+    const username = document.getElementById("username").value;
 
     console.log(age);
 
@@ -36,10 +41,12 @@ function createUser() {
         body: JSON.stringify({
             name: name,
             lastName: lastName,
-            age: age
+            age: age,
+            username: username
         }),
         headers: {
-            "Content-Type": "application/json;charset=UTF-8"
+            "Content-Type": "application/json;charset=UTF-8",
+            'Authorization': 'Basic ' + btoa("login_user:VWRYDQE2")
         }
     }).then(() => {
         window.location.href = "/feusers/users.html";
@@ -47,7 +54,12 @@ function createUser() {
 }
 
 function deleteUser(id) {
-    fetch("/users/delete/" + id, {method: "delete"})
+    fetch("/users/delete/" + id, {
+        method: "delete",
+        headers: {
+            'Authorization': 'Basic ' + btoa("login_user:VWRYDQE2")
+        }
+    })
         .then((resp) => resp.json())
         .then(successful => {
             if (successful === true) {
@@ -85,7 +97,8 @@ function updateUser() {
             age: age
         }),
         headers: {
-            "Content-Type": "application/json;charset=UTF-8"
+            "Content-Type": "application/json;charset=UTF-8",
+            'Authorization': 'Basic ' + btoa("login_user:VWRYDQE2")
         }
     }).then(resp => resp.json())
         .then(successful => {
