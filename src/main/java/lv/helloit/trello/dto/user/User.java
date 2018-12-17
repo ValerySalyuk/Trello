@@ -27,6 +27,7 @@ public class User {
     private String lastName;
     @Column(name = "username")
     @NotBlank
+    //todo rename to email
     private String username;
     @Column(name = "password_hash")
     @JsonIgnore

@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.token.Sha512DigestUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +32,7 @@ public class UserService {
         this.usersDAOImplementation = usersDAOImplementation;
         this.tasksDAOImplementation = tasksDAOImplementation;
         this.securityPropertiesBean = securityPropertiesBean;
+
     }
 
     public Long addUser(User user) {
@@ -87,7 +89,18 @@ public class UserService {
     }
 
     private void sendPasswordEmail(User user, String password) {
-        // todo implement
+
+        RestTemplate restTemplate = new RestTemplate();
+
+        String body = "You%20have%20been%20registered%20to%20Custom%20Trello.%20Your%20password:%20" + password;
+
+        String response = restTemplate.getForObject("http://localhost:8888/sendHtmlMail?body=" + body
+                + "&recipientAddress=" + user.getUsername()
+                + "&subject=Your%20password",
+                String.class);
+
+        LOGGER.info(response);
+
     }
 
     private String generatePasswordHash(String password) {
