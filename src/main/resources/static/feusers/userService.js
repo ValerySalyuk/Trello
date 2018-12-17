@@ -1,8 +1,9 @@
+
 function loadUsers() {
     fetch("/users", {
         method: "get",
         headers: {
-            'Authorization': 'Basic ' + btoa("login_user:VWRYDQE2")
+            'Authorization': 'Basic ' + btoa(localStorage.getItem("currentUsername") + ":" + localStorage.getItem("currentPassword"))
         }
     })
         .then(resp => resp.json())
@@ -34,8 +35,6 @@ function createUser() {
     const age = document.getElementById("age").value;
     const username = document.getElementById("username").value;
 
-    console.log(age);
-
     fetch("/users/add", {
         method: "post",
         body: JSON.stringify({
@@ -46,7 +45,7 @@ function createUser() {
         }),
         headers: {
             "Content-Type": "application/json;charset=UTF-8",
-            'Authorization': 'Basic ' + btoa("login_user:VWRYDQE2")
+            'Authorization': 'Basic ' + btoa(/*"login_user:VWRYDQE2"*/localStorage.getItem("currentUsername") + ":" + localStorage.getItem("currentPassword"))
         }
     }).then(() => {
         window.location.href = "/feusers/users.html";
@@ -57,7 +56,7 @@ function deleteUser(id) {
     fetch("/users/delete/" + id, {
         method: "delete",
         headers: {
-            'Authorization': 'Basic ' + btoa("login_user:VWRYDQE2")
+            'Authorization': 'Basic ' + btoa(localStorage.getItem("currentUsername") + ":" + localStorage.getItem("currentPassword"))
         }
     })
         .then((resp) => resp.json())
@@ -73,7 +72,12 @@ function deleteUser(id) {
 function loadUserForEdit() {
     const userId = new URL(window.location.href).searchParams.get("userId");
 
-    fetch("/users/" + userId)
+    fetch("/users/" + userId, {
+        method: "get",
+        headers: {
+            'Authorization': 'Basic ' + btoa(localStorage.getItem("currentUsername") + ":" + localStorage.getItem("currentPassword"))
+        }
+    })
         .then(resp => resp.json())
         .then(userFromServer => {
             document.getElementById("name").value = userFromServer.name;
@@ -98,7 +102,7 @@ function updateUser() {
         }),
         headers: {
             "Content-Type": "application/json;charset=UTF-8",
-            'Authorization': 'Basic ' + btoa("login_user:VWRYDQE2")
+            'Authorization': 'Basic ' + btoa(localStorage.getItem("currentUsername") + ":" + localStorage.getItem("currentPassword"))
         }
     }).then(resp => resp.json())
         .then(successful => {

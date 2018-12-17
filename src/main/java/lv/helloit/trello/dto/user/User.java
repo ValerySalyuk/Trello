@@ -34,6 +34,7 @@ public class User {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
     @JsonManagedReference
+    @JsonIgnore
     private List<Task> tasks;
 
     public User() {

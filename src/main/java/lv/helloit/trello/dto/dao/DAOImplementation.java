@@ -43,7 +43,7 @@ public abstract class DAOImplementation<T> implements DAO<T> {
         if (id != null) {
             obj = session.get(tClass, id);
         }
-        session.close();
+        //session.close();
 
         return Optional.ofNullable(obj);
 

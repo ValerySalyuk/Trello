@@ -1,8 +1,10 @@
+
 function loadTasks() {
     fetch("/tasks", {
         method: "get",
         headers: {
-            'Authorization': 'Basic ' + btoa("login_user:VWRYDQE2")
+            'Authorization': 'Basic ' + btoa(localStorage.getItem("currentUsername") + ":" + localStorage.getItem("currentPassword"))
+            //login_user:VWRYDQE2
         }
     }).then(
         resp => resp.json()
@@ -53,10 +55,10 @@ function createTask() {
         }),
         headers: {
             "Content-Type": "application/json;charset=UTF-8",
-            'Authorization': 'Basic ' + btoa("login_user:VWRYDQE2")
+            'Authorization': 'Basic ' + btoa(localStorage.getItem("currentUsername") + ":" + localStorage.getItem("currentPassword"))
         }
     }).then(() => {
-        window.location.href = "/index.html"; //index.html
+        window.location.href = "/fetasks/tasks.html";
     });
 }
 
@@ -64,7 +66,7 @@ function deleteTask(id) {
     fetch("/tasks/delete/" + id, {
             method: "delete",
             headers: {
-                'Authorization': 'Basic ' + btoa("login_user:VWRYDQE2")
+                'Authorization': 'Basic ' + btoa(localStorage.getItem("currentUsername") + ":" + localStorage.getItem("currentPassword"))
             }
         })
         .then((resp) => resp.json())
@@ -102,12 +104,12 @@ function updateTask() {
         }),
         headers: {
             "Content-Type": "application/json;charset=UTF-8",
-            'Authorization': 'Basic ' + btoa("login_user:VWRYDQE2")
+            'Authorization': 'Basic ' + btoa(localStorage.getItem("currentUsername") + ":" + localStorage.getItem("currentPassword"))
         }
     }).then(resp => resp.json())
         .then(successful => {
             if (successful) {
-                window.location.href = "/index.html"; //index.html
+                window.location.href = "/fetasks/tasks.html";
             } else {
                 alert("Failed to update");
             }
@@ -148,13 +150,13 @@ function assignUser(userId) {
         method: "put",
         headers: {
             "Content-Type": "application/json;charset=UTF-8",
-            'Authorization': 'Basic ' + btoa("login_user:VWRYDQE2")
+            'Authorization': 'Basic ' + btoa(localStorage.getItem("currentUsername") + ":" + localStorage.getItem("currentPassword"))
         }
     })
         .then(resp => resp.json())
         .then(successful => {
             if (successful) {
-                window.location.href = "/index.html"; //index.html
+                window.location.href = "/fetasks/tasks.html";
             } else {
                 alert("Failed to assign user");
             }
