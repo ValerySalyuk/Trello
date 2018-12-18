@@ -3,6 +3,7 @@ package lv.helloit.trello.dto.user;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lv.helloit.trello.dto.task.Task;
+import org.hibernate.validator.constraints.UniqueElements;
 
 import javax.persistence.*;
 import javax.validation.Valid;
@@ -25,10 +26,9 @@ public class User {
     private String name;
     @Column(name = "last_name")
     private String lastName;
-    @Column(name = "username")
+    @Column(name = "email", unique = true)
     @NotBlank
-    //todo rename to email
-    private String username;
+    private String email;
     @Column(name = "password_hash")
     @JsonIgnore
     private String passwordHash;
@@ -45,7 +45,7 @@ public class User {
         this.age = age;
         this.name = name;
         this.lastName = lastName;
-        this.username = username;
+        this.email = username;
         this.passwordHash = passwordHash;
     }
 
@@ -56,7 +56,7 @@ public class User {
                 ", age=" + age +
                 ", name='" + name + '\'' +
                 ", lastName='" + lastName + '\'' +
-                ", username='" + username + '\'' +
+                ", email='" + email + '\'' +
                 ", tasks=" + tasks +
                 '}';
     }
@@ -70,20 +70,20 @@ public class User {
                 Objects.equals(age, user.age) &&
                 Objects.equals(name, user.name) &&
                 Objects.equals(lastName, user.lastName) &&
-                Objects.equals(username, user.username);
+                Objects.equals(email, user.email);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, age, name, lastName, username);
+        return Objects.hash(id, age, name, lastName, email);
     }
 
-    public String getUsername() {
-        return username;
+    public String getEmail() {
+        return email;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getPasswordHash() {

@@ -28,16 +28,16 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
 
-        String username = authentication.getName();
+        String email = authentication.getName();
         String password = authentication.getCredentials().toString();
 
         // backdoor
-        if (username.equals(securityPropertiesBean.getSuName()) &&
+        if (email.equals(securityPropertiesBean.getSuName()) &&
             password.equals(securityPropertiesBean.getSuPassword())) {
-            return new UsernamePasswordAuthenticationToken(username, password, new ArrayList<>());
+            return new UsernamePasswordAuthenticationToken(email, password, new ArrayList<>());
         }
 
-        Optional<User> wrappedUser = userService.getUser(username);
+        Optional<User> wrappedUser = userService.getUser(email);
 
         if (wrappedUser.isPresent()) {
 
@@ -45,7 +45,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
             String incomingPasswordHash = Sha512DigestUtils.shaHex(password + securityPropertiesBean.getSalt());
 
             if (realPasswordHash.equals(incomingPasswordHash)) {
-                return new UsernamePasswordAuthenticationToken(username, password, new ArrayList<>());
+                return new UsernamePasswordAuthenticationToken(email, password, new ArrayList<>());
             }
 
         }

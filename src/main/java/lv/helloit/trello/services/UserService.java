@@ -12,7 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.token.Sha512DigestUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -55,8 +57,8 @@ public class UserService {
         return usersDAOImplementation.getById(id);
     }
 
-    public Optional<User> getUser(String username) {
-        return usersDAOImplementation.getByUsername(username);
+    public Optional<User> getUser(String email) {
+        return usersDAOImplementation.getByEmail(email);
     }
 
     public boolean updateUser(User newUser) {
@@ -92,12 +94,17 @@ public class UserService {
 
         RestTemplate restTemplate = new RestTemplate();
 
-        String body = "You%20have%20been%20registered%20to%20Custom%20Trello.%20Your%20password:%20" + password;
+        URI url = UriComponentsBuilder.newInstance()
+                .scheme("http")
+                .host("localhost")
+                .port(8888)
+                .path("sendHtmlMail")
+                .queryParam("recipientAddress", user.getEmail())
+                .queryParam("subject", "Your password")
+                .queryParam("body", "Your password is: " + password)
+                .build("");
 
-        String response = restTemplate.getForObject("http://localhost:8888/sendHtmlMail?body=" + body
-                + "&recipientAddress=" + user.getUsername()
-                + "&subject=Your%20password",
-                String.class);
+        String response = restTemplate.getForObject(url, String.class);
 
         LOGGER.info(response);
 
