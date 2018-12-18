@@ -4,6 +4,7 @@ import lv.helloit.trello.SecurityPropertiesBean;
 import lv.helloit.trello.dto.dao.TasksDAOImplementation;
 import lv.helloit.trello.dto.dao.UsersDAOImplementation;
 import lv.helloit.trello.dto.task.Task;
+import lv.helloit.trello.dto.user.SendMailResponse;
 import lv.helloit.trello.dto.user.User;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.Logger;
@@ -104,9 +105,10 @@ public class UserService {
                 .queryParam("body", "Your password is: " + password)
                 .build("");
 
-        String response = restTemplate.getForObject(url, String.class);
+        SendMailResponse response = restTemplate.getForObject(url, SendMailResponse.class);
 
-        LOGGER.info(response);
+        LOGGER.info("Mail sending status: " + response.isSuccessful());
+        LOGGER.info(response.toString());
 
     }
 

@@ -33,7 +33,7 @@ function createUser() {
     const name = document.getElementById("name").value;
     const lastName = document.getElementById("lastName").value;
     const age = document.getElementById("age").value;
-    const username = document.getElementById("username").value;
+    const email = document.getElementById("email").value;
 
     fetch("/users/add", {
         method: "post",
@@ -41,7 +41,7 @@ function createUser() {
             name: name,
             lastName: lastName,
             age: age,
-            username: username
+            email: email
         }),
         headers: {
             "Content-Type": "application/json;charset=UTF-8",
